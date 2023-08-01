@@ -6,7 +6,7 @@ namespace xox
     {
         static void Main(string[] args)
         {
-            restart:
+        restart:
             //3'e 3lük matrix'in oluşturulması
             char[,] arr = new char[3, 3] {{'-','-','-'},
                                           {'-','-','-'},
@@ -14,24 +14,31 @@ namespace xox
 
             List<char> drawList = new List<char>();
             // Oynanacak Sembolün  belirlenmesi
-            sembolSelection:
-            Console.WriteLine("Lütfen oynamak istediğiniz karekteri seçiniz(x veya o)");
-            string selection = Console.ReadLine();
+            bool condition = true;
+            char humanSembol = '-';
+            char yzSembol = '-';
+            while (condition)
+            {
 
-            char humanSembol;
-            char yzSembol;
-            if (selection == "x")
-            {
-                humanSembol = Convert.ToChar(selection);
-                yzSembol = 'o';
+                Console.WriteLine("Lütfen oynamak istediğiniz karekteri seçiniz(x veya o)");
+                string selection = Console.ReadLine();
+
+
+                if (selection == "x" || selection == "X")
+                {
+                    humanSembol = Convert.ToChar(selection);
+                    yzSembol = 'O';
+                    condition = false;
+                }
+                else if (selection == "o" || selection == "O")
+                {
+                    humanSembol = Convert.ToChar(selection);
+                    yzSembol = 'X';
+                    condition = false;
+                }
+
             }
-            else if (selection == "o")
-            {
-                humanSembol = Convert.ToChar(selection);
-                yzSembol = 'x';
-            }
-            else
-                goto sembolSelection;
+
 
 
             ayrac();
@@ -44,7 +51,7 @@ namespace xox
                 {
                     break;
                 }
-                
+
                 charPlacementHuman(arr, humanSembol);
                 visualization(arr);
                 ayrac();
@@ -60,7 +67,7 @@ namespace xox
                 {
                     break;
                 }
-                charPlacementYZ(arr,humanSembol,yzSembol);
+                charPlacementYZ(arr, humanSembol, yzSembol);
                 visualization(arr);
                 ayrac();
                 if (winConditions(arr))
@@ -71,37 +78,43 @@ namespace xox
             }
             //Yeni oyun yada programdan çıkış komutunun alınması
             ayrac();
-            command:
-            Console.WriteLine("Yeni Oyun İçin 'new' yazınız");
-            Console.WriteLine("Programdan çıkmak için 'exit' yazınız ");
-            string command = Console.ReadLine();
 
-            if (command == "new")
-            { 
-                Console.Clear();
-                goto restart;
-            }
-            else if (command =="exit")
+            bool condition2 = true;
+            while (condition2)
             {
-                goto cıkıs;
-            }
-            else
-            {
-                goto command;
+                Console.WriteLine("Yeni Oyun İçin 'new' yazınız");
+                Console.WriteLine("Programdan çıkmak için 'exit' yazınız ");
+                string command = Console.ReadLine();
+                if (command == "new")
+
+                {
+                    Console.Clear();
+                    goto restart;
+                }
+                else if (command == "exit")
+                {
+                    goto cıkıs;
+                }
+                else
+                {
+                    condition2 = false;
+                }
+
             }
 
-            cıkıs:
+
+        cıkıs:
             Console.WriteLine("Güle Güle");
         }
 
-        
+
         #region Metodlar
         /// <summary>
         /// Consolda çıktyılardan sonra ayraç kullanımı
         /// </summary>
         static void ayrac(char sembol = '/', int adet = 30)
         {
-            Console.WriteLine(new string(sembol,adet));
+            Console.WriteLine(new string(sembol, adet));
         }
 
         /// <summary>
@@ -110,10 +123,10 @@ namespace xox
         /// <param name="arr"></param>
         static void visualization(char[,] arr)
         {
-            int xBorder=arr.GetLength(0);
-            int yBorder=arr.GetLength(1);
+            int xBorder = arr.GetLength(0);
+            int yBorder = arr.GetLength(1);
             arr.GetLength(1);
-            for (int x = 0; x <xBorder ; x++)
+            for (int x = 0; x < xBorder; x++)
             {
                 for (int y = 0; y < yBorder; y++)
                 {
@@ -128,44 +141,47 @@ namespace xox
         /// Oynanmak istenen alana seçilen sembolun yerleştirilmesi
         /// </summary>
         /// <param name="arr"></param>
-        static void charPlacementHuman(char[,]arr , char sembol)
+        static void charPlacementHuman(char[,] arr, char sembol)
         {
-            char[] subCoorList = {'0', '1', '2' };
+            char[] subCoorList = { '0', '1', '2' };
+            
             
             Console.WriteLine("Lütfen Oynamak İstediğiniz Alanın Koordinatlarını (satırNo),(SutunNo) formatında yazınız.");
-            coorinatSelection:
-            string input = Console.ReadLine();
+
+            bool condition3 = true;
+            while (condition3)
+            {
+                string input = Console.ReadLine();
+
+                // İnputun İstenilen Formatta gelmesinin Kontrolü
+                if (input.Length != 3)
+                {
+                    Console.WriteLine("Lütfen y,x formatında değer giriniz"); 
+                }
+                else if (input[1] != ',')
+                {
+                    Console.WriteLine("Lütfen y,x formatında değer giriniz");
+                }
+                else if (!subCoorList.Contains(input[0]) || !subCoorList.Contains(input[2]))
+                {
+                    Console.WriteLine("Lütfen Girmiş Olduğunuz Koordinatlar Verilern Matrix Sınırları İçerisinde Olabilecek Koordinatlar Olsun"); 
+                }
+
+                int x = int.Parse(input[0].ToString());
+                int y = int.Parse(input[2].ToString());
+
+                // Boş alana hamle oynama kontrolü
+                if (arr[x, y] == '-')
+                {
+                    arr[x, y] = sembol;
+                    condition3 = false;
+                }
+                else
+                {
+                    Console.WriteLine("Belirtilen alan dolu Lütfen Yeni Bir Koordinat Giriniz");
+                }
+            }
             
-            // İnputun İstenilen Formatta gelmesinin Kontrolü
-            if (input.Length != 3)
-            {
-                Console.WriteLine("Lütfen y,x formatında değer giriniz");
-                goto coorinatSelection;
-            }
-            else if (input[1] != ',')
-            {
-                Console.WriteLine("Lütfen y,x formatında değer giriniz");
-                goto coorinatSelection;
-            }
-            else if (!subCoorList.Contains(input[0]) || !subCoorList.Contains(input[2]))
-            {
-                Console.WriteLine("Lütfen Girmiş Olduğunuz Koordinatlar Verilern Matrix Sınırları İçerisinde Olabilecek Koordinatlar Olsun");
-                goto coorinatSelection;
-            }
-
-            int x = int.Parse(input[0].ToString());
-            int y = int.Parse(input[2].ToString());
-
-            // Boş alana hamle oynama kontrolü
-            if (arr[x,y] == '-')
-            {
-                arr[x, y] =sembol;
-            }
-            else
-            {
-                Console.WriteLine("Belirtilen alan dolu Lütfen Yeni Bir Koordinat Giriniz");
-                goto coorinatSelection;
-            }
 
         }
 
@@ -174,7 +190,7 @@ namespace xox
         /// </summary>
         /// <param name="arr"></param>
         /// <param name="sembol"></param>
-        static void charPlacementYZ(char[,]arr , char humanSembol, char yzSembol)
+        static void charPlacementYZ(char[,] arr, char humanSembol, char yzSembol)
         {
             int x;
             int y;
@@ -193,16 +209,16 @@ namespace xox
                         }
                         arr[x, y] = '-';
                     }
-                    
+
                 }
             }
 
             // Kaybetme durumu var ise ilgili durumu engelleyen hamle
-            for (x= 0; x < 3; x++)
+            for (x = 0; x < 3; x++)
             {
-                for (y= 0; y < 3; y++)
+                for (y = 0; y < 3; y++)
                 {
-                    if (arr[x,y] == '-')
+                    if (arr[x, y] == '-')
                     {
                         arr[x, y] = humanSembol;
                         if (winConditions(arr))
@@ -214,20 +230,21 @@ namespace xox
                     }
                 }
             }
+
+        //Kazanma durumu yada kaybetme durumu yoksa random olarak hamle yap.
+            bool condition4 = true;
+            while (condition4)
+            {
+                Random rnd = new Random();
+                x = rnd.Next(0, 3);
+                y = rnd.Next(0, 3);
+                if (arr[x, y] == '-')
+                {
+                    arr[x, y] = yzSembol;
+                    condition4= false;
+                }
+            }
             
-            //Kazanma durumu yada kaybetme durumu yoksa random olarak hamle yap.
-            repatRandomYZ:
-            Random rnd = new Random();
-            x = rnd.Next(0, 3);
-            y = rnd.Next(0, 3);
-            if (arr[x,y]== '-')
-            {
-                arr[x,y]= yzSembol;
-            }
-            else
-            {
-                 goto repatRandomYZ;
-            }
         }
 
         /// <summary>
@@ -235,12 +252,12 @@ namespace xox
         /// </summary>
         /// <param name="arr"></param>
         /// <returns></returns>
-        static bool winConditions(char[,]arr )
+        static bool winConditions(char[,] arr)
         {
             //Dikey Kontrol
             for (int x = 0; x < 3; x++)
             {
-                if (arr[x, 0] != '-' && arr[x, 0] == arr[x, 1] && arr[x,0] == arr[x,2])
+                if (arr[x, 0] != '-' && arr[x, 0] == arr[x, 1] && arr[x, 0] == arr[x, 2])
                 {
                     return true;
                 }
@@ -249,15 +266,15 @@ namespace xox
             //Yatay Kontrol
             for (int y = 0; y < 3; y++)
             {
-                if (arr[0, y] != '-' && arr[0, y] == arr[1, y] && arr[0,y] == arr[2,y])
-                { 
+                if (arr[0, y] != '-' && arr[0, y] == arr[1, y] && arr[0, y] == arr[2, y])
+                {
                     return true;
                 }
             }
 
             //Çapraz Kontrol
-            if (arr[0,0] != '-' && arr[0,0] == arr[1,1] && arr[0,0] == arr[2,2])
-            {   
+            if (arr[0, 0] != '-' && arr[0, 0] == arr[1, 1] && arr[0, 0] == arr[2, 2])
+            {
                 return true;
             }
 
@@ -272,14 +289,14 @@ namespace xox
         /// <summary>
         /// Beraberlik durumunu kontrol eder
         /// </summary>
-        static bool drawCondition(char[,] arr , List<char>drawList)
+        static bool drawCondition(char[,] arr, List<char> drawList)
         {
             drawList.Clear();
             for (int x = 0; x < 3; x++)
             {
                 for (int y = 0; y < 3; y++)
                 {
-                    drawList.Add(arr[x,y]);
+                    drawList.Add(arr[x, y]);
                 }
             }
 
